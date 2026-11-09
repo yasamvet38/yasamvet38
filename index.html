@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAŞAMvet - Nihat İLHAN (0553 053 05 97)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        stDark: '#050505',
+                        stCard: '#121212',
+                        stSidebar: '#0a0a0a',
+                        stRed: '#dc2626',
+                        stRedBright: '#ef4444',
+                        stRedDark: '#991b1b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #262626; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #dc2626; }
+    </style>
+</head>
+<body class="bg-stDark text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-red-600 selection:text-white">
+
+    <!-- STREAMLIT TOP TOOLBAR -->
+    <header class="bg-black border-b border-zinc-800 px-4 py-2 flex items-center justify-between text-xs sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2 text-red-500 font-bold font-mono">
+                <i class="fa-solid fa-play text-xs"></i>
+                <span>Streamlit App Engine</span>
+            </div>
+            <span class="text-zinc-700">|</span>
+            <span class="text-zinc-400 flex items-center gap-1.5 text-[11px]">
+                <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+                yasamvet_v3_dark.py (Aktif)
+            </span>
+        </div>
+        <div class="flex items-center space-x-3 text-zinc-400">
+            <span class="bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded text-[11px] text-red-400 font-mono">YAŞAMvet v3.0</span>
+            <button onclick="location.reload()" class="hover:text-white transition flex items-center gap-1 text-xs">
+                <i class="fa-solid fa-rotate-right"></i> Yeniden Başlat
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN STREAMLIT LAYOUT -->
+    <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+
+        <!-- STREAMLIT SIDEBAR -->
+        <aside class="w-full md:w-72 bg-stSidebar border-r border-zinc-800 p-4 flex flex-col space-y-6 shrink-0">
+            <!-- Brand Info Box -->
+            <div class="bg-zinc-900 p-4 rounded-xl border border-red-900/40 shadow-lg shadow-red-950/20">
+                <div class="flex items-center space-x-3">
+                    <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center text-white font-black text-xl shadow-md border border-red-500/30">
+                        🐾
+                    </div>
+                    <div>
+                        <h2 class="font-extrabold text-sm text-white tracking-wide">YAŞAMvet PRO</h2>
+                        <p class="text-[11px] text-red-400 font-semibold">Nihat İLHAN</p>
+                        <p class="text-[10px] text-zinc-400 font-mono">📞 0553 053 05 97</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Widget -->
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block font-mono">st.sidebar.selectbox</label>
+                <div class="space-y-1">
+                    <button onclick="navigate('dashboard')" id="nav-dashboard" class="w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 transition bg-red-600 text-white shadow-lg shadow-red-900/30 border border-red-500">
+                        <i class="fa-solid fa-house-medical w-4 text-white"></i>
+                        <span>Ana Sayfa & Tedaviler</span>
+                    </button>
+                    <button onclick="navigate('animals')" id="nav-animals" class="w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 transition text-zinc-300 hover:bg-zinc-900 hover:text-white">
+                        <i class="fa-solid fa-cow w-4 text-red-500"></i>
+                        <span>Hayvan Kayıt & Listesi</span>
+                    </button>
+                    <button onclick="navigate('insemination')" id="nav-insemination" class="w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 transition text-zinc-300 hover:bg-zinc-900 hover:text-white">
+                        <i class="fa-solid fa-dna w-4 text-red-400"></i>
+                        <span>Tohumlama & Gebelik</span>
+                    </button>
+                    <button onclick="navigate('history')" id="nav-history" class="w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 transition text-zinc-300 hover:bg-zinc-900 hover:text-white">
+                        <i class="fa-solid fa-clock-rotate-left w-4 text-red-400"></i>
+                        <span>Küpe Geçmişi (Hadise)</span>
+                    </button>
+                    <button onclick="navigate('health')" id="nav-health" class="w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 transition text-zinc-300 hover:bg-zinc-900 hover:text-white">
+                        <i class="fa-solid fa-syringe w-4 text-red-500"></i>
+                        <span>Aşı & Genel Tedavi Kayıtları</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Action Box -->
+            <div class="mt-auto bg-zinc-950 p-3.5 rounded-xl border border-zinc-850 space-y-2">
+                <span class="text-[10px] text-zinc-500 font-mono font-bold block uppercase tracking-wider">Hızlı Tedavi Gir</span>
+                <button onclick="openModal('modal-treatment')" class="w-full bg-red-600/20 hover:bg-red-600/40 text-red-300 border border-red-500/40 text-xs py-2 px-3 rounded-lg flex items-center justify-center gap-2 font-semibold transition shadow">
+                    <i class="fa-solid fa-kit-medical text-red-400"></i>
+                    <span>+ Tedavi & İlaç Ekle</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- STREAMLIT MAIN CONTENT AREA -->
+        <main class="flex-1 p-4 md:p-6 overflow-y-auto max-w-6xl mx-auto w-full space-y-6">
+
+            <!-- PAGE HEADER -->
+            <div class="border-b border-zinc-800 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h1 id="page-title" class="text-xl md:text-2xl font-black text-white flex items-center gap-2">
+                        <i class="fa-solid fa-notes-medical text-red-600"></i> Ana Sayfa: Tedavisi Süren Hayvanlar & İlaç Takibi
+                    </h1>
+                    <p class="text-xs text-zinc-400 mt-1">Sorumlu Veteriner Hekim: <strong class="text-white font-semibold">Nihat İLHAN (0553 053 05 97)</strong></p>
+                </div>
+                <div class="flex items-center space-x-2 text-xs">
+                    <span class="bg-red-950/80 text-red-400 border border-red-800/60 px-3 py-1 rounded-full font-mono font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-shield-halved"></i> Klinik Kayıt Sistemi
+                    </span>
+                </div>
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- SECTION 1: ANA SAYFA (DASHBOARD & TEDAVİLER) -->
+            <!-- ========================================================================= -->
+            <div id="sec-dashboard" class="space-y-6">
+                
+                <!-- Metrics -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-stCard p-4 rounded-xl border border-zinc-800 shadow-md relative overflow-hidden">
+                        <div class="w-1.5 h-full bg-red-600 absolute left-0 top-0"></div>
+                        <div class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Tedavisi Süren Hayvanlar</div>
+                        <div class="flex items-baseline justify-between mt-2">
+                            <span id="metric-active-treatments" class="text-3xl font-black text-red-500">2 Baş</span>
+                            <span class="text-[10px] text-red-400 bg-red-950/70 px-2 py-0.5 rounded border border-red-800/50 font-bold">Aktif İlaçta</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-stCard p-4 rounded-xl border border-zinc-800 shadow-md">
+                        <div class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Toplam Küpeli Hayvan</div>
+                        <div class="flex items-baseline justify-between mt-2">
+                            <span id="metric-total-animals" class="text-3xl font-black text-white">4 Baş</span>
+                            <span class="text-[10px] text-zinc-400 bg-zinc-900 px-2 py-0.5 rounded border border-zinc-800">Sürü Kayıtlı</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-stCard p-4 rounded-xl border border-zinc-800 shadow-md">
+                        <div class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Gebe Hayvan Sayısı</div>
+                        <div class="flex items-baseline justify-between mt-2">
+                            <span id="metric-pregnant-count" class="text-3xl font-black text-white">2 Baş</span>
+                            <span class="text-[10px] text-red-400 bg-red-950/40 px-2 py-0.5 rounded border border-red-900/40">Tohumlu</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-stCard p-4 rounded-xl border border-zinc-800 shadow-md">
+                        <div class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Yaklaşan Aşı / Kontrol</div>
+                        <div class="flex items-baseline justify-between mt-2">
+                            <span class="text-3xl font-black text-white">1 İşlem</span>
+                            <span class="text-[10px] text-amber-400 bg-amber-950/40 px-2 py-0.5 rounded border border-amber-900/40">Bu Hafta</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAIN PANEL: TEDAVİSİ SÜREN HAYVANLAR VE İLAÇ REÇETELERİ -->
+                <div class="bg-stCard rounded-xl border border-zinc-800 p-5 shadow-xl space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-zinc-800 pb-3">
+                        <div>
+                            <h2 class="text-base font-extrabold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-notes-medical text-red-600 text-lg"></i>
+                                Tedavisi Devam Eden Hayvanlar & Kullanılacak İlaçlar
+                            </h2>
+                            <p class="text-xs text-zinc-400">Aktif hastalık teşhisleri, verilecek ilaç dozajları ve tedavi takvimi</p>
+                        </div>
+                        <button onclick="openModal('modal-treatment')" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center justify-center space-x-2 transition shadow-lg shadow-red-950">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Yeni Tedavi & İlaç Ekle</span>
+                        </button>
+                    </div>
+
+                    <!-- Ongoing Treatments Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-black text-zinc-400 border-b border-zinc-800 uppercase text-[11px] font-mono">
+                                <tr>
+                                    <th class="p-3">Küpe No & Adı</th>
+                                    <th class="p-3">Teşhis / Hastalık</th>
+                                    <th class="p-3">Kullanılacak İlaçlar & Dozaj</th>
+                                    <th class="p-3">Başlangıç Tarihi</th>
+                                    <th class="p-3">Durum</th>
+                                    <th class="p-3 text-right">İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="treatment-table-body" class="divide-y divide-zinc-800 text-zinc-200">
+                                <!-- Dynamic Render -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Süt Verim Grafiği -->
+                <div class="bg-stCard p-5 rounded-xl border border-zinc-800 shadow-md space-y-3">
+                    <h3 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-red-500"></i> Günlük Süt Verim Takibi (Litre)
+                    </h3>
+                    <div class="h-56">
+                        <canvas id="milkChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- SECTION 2: HAYVAN LİSTESİ & KAYIT -->
+            <!-- ========================================================================= -->
+            <div id="sec-animals" class="hidden space-y-4">
+                <div class="bg-stCard p-4 rounded-xl border border-zinc-800 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="w-full sm:w-72 relative">
+                        <input type="text" id="animal-search" oninput="filterAnimals()" placeholder="Küpe No veya İsim ile ara..." class="w-full bg-black border border-zinc-800 rounded-lg pl-9 pr-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-red-600">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-zinc-500 text-xs"></i>
+                    </div>
+                    <button onclick="openModal('modal-animal')" class="w-full sm:w-auto bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center justify-center space-x-2 transition">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Yeni Küpe Kaydet</span>
+                    </button>
+                </div>
+
+                <div class="bg-stCard rounded-xl border border-zinc-800 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-black text-zinc-400 border-b border-zinc-800 font-mono">
+                                <tr>
+                                    <th class="p-3">Küpe Numarası</th>
+                                    <th class="p-3">Hayvan Adı</th>
+                                    <th class="p-3">Irkı</th>
+                                    <th class="p-3">Cinsiyet</th>
+                                    <th class="p-3">Doğum Tarihi</th>
+                                    <th class="p-3">Gebelik / Sağlık</th>
+                                    <th class="p-3 text-right">İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="animal-table-body" class="divide-y divide-zinc-800 text-zinc-200">
+                                <!-- Dynamic Render -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- SECTION 3: TOHUMLAMA & GEBELİK TAKİBİ -->
+            <!-- ========================================================================= -->
+            <div id="sec-insemination" class="hidden space-y-6">
+                <div class="bg-stCard p-4 rounded-xl border border-zinc-800 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-dna text-red-500"></i> Tohumlama ve Beklenen Doğum Takvimi
+                        </h3>
+                        <p class="text-xs text-zinc-400">Sığır gebelik süresi ~283 gün üzerinden otomatik hesaplanır.</p>
+                    </div>
+                    <button onclick="openModal('modal-insemination')" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center space-x-2 transition">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Tohumlama Kaydı Ekle</span>
+                    </button>
+                </div>
+
+                <div class="bg-stCard rounded-xl border border-zinc-800 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-black text-zinc-400 border-b border-zinc-800 font-mono">
+                                <tr>
+                                    <th class="p-3">Küpe No</th>
+                                    <th class="p-3">Hayvan Adı</th>
+                                    <th class="p-3">Tohumlama Tarihi</th>
+                                    <th class="p-3">Boğa Irkı / Kodu</th>
+                                    <th class="p-3">Tahmini Doğum Tarihi</th>
+                                    <th class="p-3">Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody id="insemination-table-body" class="divide-y divide-zinc-800 text-zinc-200">
+                                <!-- Dynamic Table -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- SECTION 4: KÜPEYE ÖZEL GEÇMİŞ (HADİSE TAKİBİ) -->
+            <!-- ========================================================================= -->
+            <div id="sec-history" class="hidden space-y-6">
+                <div class="bg-stCard p-4 rounded-xl border border-zinc-800 space-y-3">
+                    <label class="text-xs font-bold text-zinc-300 block">
+                        Tıbbi & Sağlık Geçmişini İncelemek İstediğiniz Küpeyi Seçin:
+                    </label>
+                    <select id="history-animal-select" onchange="renderIndividualHistory()" class="w-full bg-black border border-zinc-800 rounded-lg p-2.5 text-sm font-semibold text-red-400 focus:outline-none focus:border-red-600 font-mono">
+                        <!-- Options filled dynamically -->
+                    </select>
+                </div>
+
+                <div id="history-profile-card" class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 flex flex-wrap justify-between items-center gap-4">
+                    <!-- Profile details injected dynamically -->
+                </div>
+
+                <div class="bg-stCard p-6 rounded-xl border border-zinc-800 space-y-4">
+                    <h3 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-red-500"></i> Kronolojik Sağlık & Tedavi Öyküsü (Hadiseler)
+                    </h3>
+                    <div id="history-timeline" class="relative border-l-2 border-zinc-800 pl-6 space-y-6 ml-2">
+                        <!-- Dynamic Hadise Items -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- SECTION 5: AŞI & GENEL SAĞLIK -->
+            <!-- ========================================================================= -->
+            <div id="sec-health" class="hidden space-y-6">
+                <div class="bg-stCard p-4 rounded-xl border border-zinc-800 flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-syringe text-red-500"></i> Rutin Aşı ve Parazit Uygulamaları
+                    </h3>
+                    <button onclick="openModal('modal-health')" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center space-x-2 transition">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Aşı Kaydı Ekle</span>
+                    </button>
+                </div>
+
+                <div class="bg-stCard rounded-xl border border-zinc-800 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-black text-zinc-400 border-b border-zinc-800 font-mono">
+                                <tr>
+                                    <th class="p-3">Tarih</th>
+                                    <th class="p-3">Küpe No</th>
+                                    <th class="p-3">Uygulanan Aşı</th>
+                                    <th class="p-3">Gelecek Kontrol Tarihi</th>
+                                    <th class="p-3">Veteriner Hekim</th>
+                                </tr>
+                            </thead>
+                            <tbody id="health-table-body" class="divide-y divide-zinc-800 text-zinc-200">
+                                <!-- Dynamic Health Data -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODALS -->
+
+    <!-- Modal 1: Yeni Tedavi & Kullanılacak İlaç Ekle -->
+    <div id="modal-treatment" class="fixed inset-0 bg-black/85 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-stCard border border-zinc-800 rounded-xl p-6 w-full max-w-lg space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+                <h3 class="font-extrabold text-white text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-kit-medical text-red-500"></i> Yeni Tedavi & İlaç Reçetesi Gir
+                </h3>
+                <button onclick="closeModal('modal-treatment')" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="handleAddTreatment(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-zinc-300 mb-1 font-semibold">Hasta Hayvan (Küpe No) *</label>
+                    <select id="inp-treat-kupe" class="w-full bg-black border border-zinc-800 rounded p-2.5 text-white font-mono">
+                        <!-- Options generated dynamically -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-zinc-300 mb-1 font-semibold">Teşhis / Hastalık Adı *</label>
+                    <input type="text" id="inp-treat-teshis" required placeholder="Örn: Mastitis (Meme İltihabı) veya Ayak Çürüğü" class="w-full bg-black border border-zinc-800 rounded p-2.5 text-white placeholder-zinc-600">
+                </div>
+                <div>
+                    <label class="block text-zinc-300 mb-1 font-semibold">Kullanılacak İlaçlar ve Dozajı *</label>
+                    <textarea id="inp-treat-ilaclar" required rows="3" placeholder="Örn: Penisilin 20ml (3 Gün), Vitamin C 10ml, Ağrı Kesici Sprey" class="w-full bg-black border border-zinc-800 rounded p-2.5 text-white placeholder-zinc-600"></textarea>
+                </div>
+                <div>
+                    <label class="block text-zinc-300 mb-1 font-semibold">Tedavi Başlangıç Tarihi *</label>
+                    <input type="date" id="inp-treat-tarih" required class="w-full bg-black border border-zinc-800 rounded p-2.5 text-white">
+                </div>
+                <div class="pt-3 flex justify-end space-x-2 border-t border-zinc-800">
+                    <button type="button" onclick="closeModal('modal-treatment')" class="bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded text-zinc-300 font-semibold">İptal</button>
+                    <button type="submit" class="bg-red-600 hover:bg-red-500 text-white px-5 py-2 rounded font-bold shadow-lg shadow-red-950">Tedaviyi Başlat ve Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: Yeni Hayvan Kaydı -->
+    <div id="modal-animal" class="fixed inset-0 bg-black/85 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-stCard border border-zinc-800 rounded-xl p-6 w-full max-w-md space-y-4">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+                <h3 class="font-bold text-white text-sm">Yeni Küpe Kaydı</h3>
+                <button onclick="closeModal('modal-animal')" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="handleAddAnimal(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-zinc-300 mb-1">Küpe Numarası *</label>
+                    <input type="text" id="inp-kupe" required placeholder="TR-38-005" class="w-full bg-black border border-zinc-800 rounded p-2 text-white font-mono">
+                </div>
+                <div>
+                    <label class="block text-zinc-300 mb-1">Hayvan Adı</label>
+                    <input type="text" id="inp-adi" placeholder="Örn: Pamuk" class="w-full bg-black border border-zinc-800 rounded p-2 text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-zinc-300 mb-1">Irkı</label>
+                        <select id="inp-irk" class="w-full bg-black border border-zinc-800 rounded p-2 text-white">
+                            <option>Simental</option>
+                            <option>Holştayn</option>
+                            <option>Angus</option>
+                            <option>Montofon</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-zinc-300 mb-1">Cinsiyeti</label>
+                        <select id="inp-cinsiyet" class="w-full bg-black border border-zinc-800 rounded p-2 text-white">
+                            <option>Dişi</option>
+                            <option>Erkek</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-zinc-300 mb-1">Doğum Tarihi</label>
+                    <input type="date" id="inp-dogum" required class="w-full bg-black border border-zinc-800 rounded p-2 text-white">
+                </div>
+                <div class="pt-2 flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal('modal-animal')" class="bg-zinc-800 px-3 py-1.5 rounded">İptal</button>
+                    <button type="submit" class="bg-red-600 hover:bg-red-500 text-white px-4 py-1.5 rounded font-bold">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 3: Tohumlama Kaydı Ekle -->
+    <div id="modal-insemination" class="fixed inset-0 bg-black/85 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-stCard border border-zinc-800 rounded-xl p-6 w-full max-w-md space-y-4">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+                <h3 class="font-bold text-white text-sm">Tohumlama Kaydı Ekle</h3>
+                <button onclick="closeModal('modal-insemination')" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="handleAddInsemination(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-zinc-300 mb-1">Hayvan Seçin (Küpe No) *</label>
+                    <select id="inp-insem-kupe" class="w-full bg-black border border-zinc-800 rounded p-2 text-white font-mono">
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-zinc-300 mb-1">Tohumlama Tarihi *</label>
+                    <input type="date" id="inp-insem-tarih" required class="w-full bg-black border border-zinc-800 rounded p-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-zinc-300 mb-1">Kullanılan Boğa / Irk</label>
+                    <input type="text" id="inp-insem-boga" placeholder="Örn: Holştayn / TR-BOGA-99" class="w-full bg-black border border-zinc-800 rounded p-2 text-white">
+                </div>
+                <div class="pt-2 flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal('modal-insemination')" class="bg-zinc-800 px-3 py-1.5 rounded">İptal</button>
+                    <button type="submit" class="bg-red-600 hover:bg-red-500 text-white px-4 py-1.5 rounded font-bold">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 4: Aşı Ekle -->
+    <div id="modal-health" class="fixed inset-0 bg-black/85 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-stCard border border-zinc-800 rounded-xl p-6 w-full max-w-md space-y-4">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+                <h3 class="font-bold text-white text-sm">Aşı Kaydı</h3>
+                <button onclick="closeModal('modal-health')" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="handleAddHealth(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-zinc-300 mb-1">Hayvan Seçin (Küpe No) *</label>
+                    <select id="inp-health-kupe" class="w-full bg-black border border-zinc-800 rounded p-2 text-white font-mono">
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-zinc-300 mb-1">Uygulanan Aşı *</label>
+                    <input type="text" id="inp-health-asi" required placeholder="Örn: Şap Aşısı 2. Doz" class="w-full bg-black border border-zinc-800 rounded p-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-zinc-300 mb-1">Gelecek Kontrol Tarihi</label>
+                    <input type="date" id="inp-health-kontrol" class="w-full bg-black border border-zinc-800 rounded p-2 text-white">
+                </div>
+                <div class="pt-2 flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal('modal-health')" class="bg-zinc-800 px-3 py-1.5 rounded">İptal</button>
+                    <button type="submit" class="bg-red-600 hover:bg-red-500 text-white px-4 py-1.5 rounded font-bold">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- APPLICATION DATA & SCRIPT -->
+    <script>
+        // Animals Base Data
+        let animals = [
+            { kupe: "TR-38-001", adi: "Sarıkız", irk: "Simental", cinsiyet: "Dişi", dogum: "2023-04-12", gebelik: "Gebe", durum: "Mastitis Tedavisinde" },
+            { kupe: "TR-38-002", adi: "Kınalı", irk: "Holştayn", cinsiyet: "Dişi", dogum: "2024-09-05", gebelik: "Boş", durum: "Sağlıklı" },
+            { kupe: "TR-38-003", adi: "Benekli", irk: "Simental", cinsiyet: "Dişi", dogum: "2022-11-20", gebelik: "Gebe", durum: "Ayak Çürüğü Tedavisinde" },
+            { kupe: "TR-38-004", adi: "Efe", irk: "Angus", cinsiyet: "Erkek", dogum: "2025-01-15", gebelik: "Erkek", durum: "Sağlıklı" }
+        ];
+
+        // Ongoing Active Treatments Data
+        let treatments = [
+            {
+                id: 1,
+                kupe: "TR-38-001",
+                adi: "Sarıkız",
+                teshis: "Klinik Mastitis (Meme İltihabı)",
+                ilaclar: "Penisilin-Streptomisin 20ml (3 Gün), Meme İçi İntramammar Tüp, Flunixin Meglumine (Ağrı Kesici 10ml)",
+                tarih: "2026-02-08",
+                aktif: true
+            },
+            {
+                id: 2,
+                kupe: "TR-38-003",
+                adi: "Benekli",
+                teshis: "Ayak Çürüğü (Interdigital Dermatitis)",
+                ilaclar: "Oksitetrasiklin Sprey (Günde 2 Defa), Seftiofur 10ml Enjeksiyon, Ayak Banyosu (Bakır Sülfat)",
+                tarih: "2026-02-09",
+                aktif: true
+            }
+        ];
+
+        let inseminations = [
+            { kupe: "TR-38-001", tarih: "2025-11-10", boga: "Holştayn / TR-BOGA-90", beklenen: "2026-08-20", durum: "Gebe" },
+            { kupe: "TR-38-003", tarih: "2026-01-05", boga: "Simental / Safkan-11", beklenen: "2026-10-15", durum: "Gebe" }
+        ];
+
+        let healthRecords = [
+            { tarih: "2026-01-15", kupe: "TR-38-001", asi: "Şap Aşısı + Parazit", kontrol: "2026-07-15", vet: "Nihat İLHAN" },
+            { tarih: "2026-02-01", kupe: "TR-38-002", asi: "Vitamin C Enjeksiyon", kontrol: "2026-03-01", vet: "Nihat İLHAN" }
+        ];
+
+        let animalEvents = {
+            "TR-38-001": [
+                { tarih: "12.04.2023", tur: "Doğum", aciklama: "Çiftlikte dünyaya geldi." },
+                { tarih: "10.11.2025", tur: "Tohumlama", aciklama: "Holştayn boğa sperması ile suni tohumlama yapıldı." },
+                { tarih: "08.02.2026", tur: "Tedavi Başlangıcı", aciklama: "Mastitis Teşhisi Konuldu. Reçete: Penisilin 20ml + Flunixin Meglumine." }
+            ],
+            "TR-38-003": [
+                { tarih: "20.11.2022", tur: "Doğum", aciklama: "Kayıt açıldı." },
+                { tarih: "09.02.2026", tur: "Tedavi Başlangıcı", aciklama: "Ayak Çürüğü tedavisi başlatıldı. Reçete: Oksitetrasiklin Sprey + Seftiofur." }
+            ]
+        };
+
+        let milkChartObj;
+
+        window.onload = function() {
+            renderAllData();
+            initChart();
+        };
+
+        function navigate(pageId) {
+            const pages = ['dashboard', 'animals', 'insemination', 'history', 'health'];
+            pages.forEach(p => {
+                document.getElementById('sec-' + p).classList.add('hidden');
+                document.getElementById('nav-' + p).className = "w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 transition text-zinc-300 hover:bg-zinc-900 hover:text-white";
+            });
+
+            document.getElementById('sec-' + pageId).classList.remove('hidden');
+            document.getElementById('nav-' + pageId).className = "w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 transition bg-red-600 text-white shadow-lg shadow-red-900/30 border border-red-500";
+
+            const titles = {
+                'dashboard': '<i class="fa-solid fa-notes-medical text-red-600"></i> Ana Sayfa: Tedavisi Süren Hayvanlar & İlaç Takibi',
+                'animals': '<i class="fa-solid fa-cow text-red-600"></i> Hayvan Kayıt & Listesi',
+                'insemination': '<i class="fa-solid fa-dna text-red-600"></i> Tohumlama & Gebelik Takip Paneli',
+                'history': '<i class="fa-solid fa-clock-rotate-left text-red-600"></i> Küpeye Özel Tıbbi Geçmiş & Hadiseler',
+                'health': '<i class="fa-solid fa-syringe text-red-600"></i> Aşı ve Genel Sağlık İşlemleri'
+            };
+            document.getElementById('page-title').innerHTML = titles[pageId];
+
+            if (pageId === 'history') {
+                renderIndividualHistory();
+            }
+        }
+
+        function renderAllData() {
+            renderTreatmentsTable();
+            renderAnimalsTable();
+            renderInseminationTable();
+            renderHealthTable();
+            populateDropdowns();
+            updateMetrics();
+        }
+
+        function updateMetrics() {
+            const activeTreatCount = treatments.filter(t => t.aktif).length;
+            document.getElementById('metric-active-treatments').innerText = activeTreatCount + " Baş";
+            document.getElementById('metric-total-animals').innerText = animals.length + " Baş";
+            const pregnantCount = animals.filter(a => a.gebelik === 'Gebe').length;
+            document.getElementById('metric-pregnant-count').innerText = pregnantCount + " Baş";
+        }
+
+        // RENDER ONGOING TREATMENTS TABLE ON HOME PAGE
+        function renderTreatmentsTable() {
+            const tbody = document.getElementById('treatment-table-body');
+            tbody.innerHTML = '';
+
+            treatments.forEach(t => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-zinc-900/60 transition";
+                
+                const statusBadge = t.aktif 
+                    ? `<span class="bg-red-950 text-red-400 border border-red-800/80 px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 w-fit"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Tedavide</span>`
+                    : `<span class="bg-emerald-950 text-emerald-400 border border-emerald-800/80 px-2.5 py-1 rounded-full text-[10px] font-bold w-fit">İyileşti / Taburcu</span>`;
+
+                tr.innerHTML = `
+                    <td class="p-3">
+                        <div class="font-bold text-red-400 font-mono text-xs">${t.kupe}</div>
+                        <div class="text-zinc-300 font-semibold text-[11px]">${t.adi}</div>
+                    </td>
+                    <td class="p-3 font-semibold text-white">${t.teshis}</td>
+                    <td class="p-3 text-zinc-300 max-w-xs font-mono text-[11px] leading-relaxed bg-zinc-950/80 rounded p-2 border border-zinc-850">
+                        <i class="fa-solid fa-pills text-red-500 mr-1"></i> ${t.ilaclar}
+                    </td>
+                    <td class="p-3 text-zinc-400 font-mono">${t.tarih}</td>
+                    <td class="p-3">${statusBadge}</td>
+                    <td class="p-3 text-right">
+                        ${t.aktif ? `<button onclick="completeTreatment(${t.id})" class="bg-zinc-800 hover:bg-emerald-900 hover:text-emerald-200 text-zinc-300 border border-zinc-700 hover:border-emerald-700 px-2.5 py-1 rounded text-[11px] font-bold transition">Tedaviyi Tamamla</button>` : `<span class="text-zinc-600 text-[11px]">Tamamlandı</span>`}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function completeTreatment(id) {
+            const treat = treatments.find(t => t.id === id);
+            if (treat) {
+                treat.aktif = false;
+                
+                // Add event timeline
+                if (!animalEvents[treat.kupe]) animalEvents[treat.kupe] = [];
+                animalEvents[treat.kupe].push({
+                    tarih: new Date().toLocaleDateString('tr-TR'),
+                    tur: "Tedavi Tamamlandı",
+                    aciklama: `${treat.teshis} tedavisi başarıyla tamamlandı. İlaç uygulaması sonlandırıldı.`
+                });
+
+                renderAllData();
+            }
+        }
+
+        // ANIMALS TABLE
+        function renderAnimalsTable() {
+            const tbody = document.getElementById('animal-table-body');
+            tbody.innerHTML = '';
+
+            animals.forEach(a => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-zinc-900/60 transition";
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-red-400 font-mono">${a.kupe}</td>
+                    <td class="p-3 font-semibold text-white">${a.adi}</td>
+                    <td class="p-3 text-zinc-300">${a.irk}</td>
+                    <td class="p-3">${a.cinsiyet}</td>
+                    <td class="p-3 text-zinc-400 font-mono">${a.dogum}</td>
+                    <td class="p-3">
+                        <span class="${a.gebelik === 'Gebe' ? 'bg-red-950 text-red-300 border border-red-800' : 'bg-zinc-900 text-zinc-400'} px-2 py-0.5 rounded text-[10px] font-bold">${a.gebelik}</span>
+                    </td>
+                    <td class="p-3 text-right">
+                        <button onclick="selectAnimalHistory('${a.kupe}')" class="text-red-400 hover:text-red-300 mr-2" title="Geçmiş"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                        <button onclick="deleteAnimal('${a.kupe}')" class="text-zinc-600 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterAnimals() {
+            const q = document.getElementById('animal-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#animal-table-body tr');
+            rows.forEach(r => {
+                r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
+            });
+        }
+
+        // INSEMINATION TABLE
+        function renderInseminationTable() {
+            const tbody = document.getElementById('insemination-table-body');
+            tbody.innerHTML = '';
+
+            inseminations.forEach(i => {
+                const animal = animals.find(a => a.kupe === i.kupe) || { adi: '-' };
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-zinc-900/60 transition";
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-red-400 font-mono">${i.kupe}</td>
+                    <td class="p-3 text-white font-semibold">${animal.adi}</td>
+                    <td class="p-3 text-zinc-300 font-mono">${i.tarih}</td>
+                    <td class="p-3 text-zinc-400">${i.boga}</td>
+                    <td class="p-3 font-bold text-red-400 font-mono">${i.beklenen}</td>
+                    <td class="p-3"><span class="bg-red-950 text-red-300 border border-red-800 px-2 py-0.5 rounded text-[10px] font-bold">${i.durum}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // HEALTH TABLE
+        function renderHealthTable() {
+            const tbody = document.getElementById('health-table-body');
+            tbody.innerHTML = '';
+
+            healthRecords.forEach(h => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-zinc-900/60 transition";
+                tr.innerHTML = `
+                    <td class="p-3 text-zinc-400 font-mono">${h.tarih}</td>
+                    <td class="p-3 font-bold text-red-400 font-mono">${h.kupe}</td>
+                    <td class="p-3 text-white font-medium">${h.asi}</td>
+                    <td class="p-3 text-amber-400 font-mono">${h.kontrol || '-'}</td>
+                    <td class="p-3 text-zinc-300">${h.vet}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // KÜPEYE ÖZEL GEÇMİŞ (HADİSE)
+        function renderIndividualHistory() {
+            const select = document.getElementById('history-animal-select');
+            const selectedKupe = select.value;
+            const animal = animals.find(a => a.kupe === selectedKupe);
+
+            if (!animal) return;
+
+            document.getElementById('history-profile-card').innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 rounded-xl bg-red-950/80 border border-red-700/60 flex items-center justify-center text-red-400 font-bold text-lg font-mono">
+                        ${animal.kupe.slice(-3)}
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-white">${animal.adi} (${animal.kupe})</h3>
+                        <p class="text-xs text-zinc-400">Irk: ${animal.irk} | Cinsiyet: ${animal.cinsiyet} | Doğum: ${animal.dogum}</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="px-3 py-1 bg-red-950 text-red-300 border border-red-800 rounded-full text-xs font-bold">
+                        Gebelik: ${animal.gebelik}
+                    </span>
+                    <button onclick="openModal('modal-treatment')" class="bg-red-600 hover:bg-red-500 text-white text-xs px-3 py-1 rounded font-bold">Tedavi Ekle</button>
+                </div>
+            `;
+
+            const timeline = document.getElementById('history-timeline');
+            timeline.innerHTML = '';
+
+            const events = animalEvents[selectedKupe] || [
+                { tarih: animal.dogum, tur: "Kayıt", aciklama: "İlk sürü kaydı açıldı." }
+            ];
+
+            events.forEach(e => {
+                const item = document.createElement('div');
+                item.className = "relative";
+                item.innerHTML = `
+                    <div class="absolute -left-[31px] top-1.5 w-3 h-3 rounded-full bg-red-600 border-2 border-stCard"></div>
+                    <div class="bg-black p-3.5 rounded-lg border border-zinc-800 space-y-1">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-red-400 font-mono">${e.tarih}</span>
+                            <span class="text-[10px] bg-zinc-900 text-zinc-300 px-2 py-0.5 rounded border border-zinc-800 font-semibold">${e.tur}</span>
+                        </div>
+                        <p class="text-xs text-zinc-200">${e.aciklama}</p>
+                    </div>
+                `;
+                timeline.appendChild(item);
+            });
+        }
+
+        function selectAnimalHistory(kupe) {
+            navigate('history');
+            document.getElementById('history-animal-select').value = kupe;
+            renderIndividualHistory();
+        }
+
+        function populateDropdowns() {
+            const historySelect = document.getElementById('history-animal-select');
+            const insemSelect = document.getElementById('inp-insem-kupe');
+            const healthSelect = document.getElementById('inp-health-kupe');
+            const treatSelect = document.getElementById('inp-treat-kupe');
+
+            historySelect.innerHTML = '';
+            insemSelect.innerHTML = '';
+            healthSelect.innerHTML = '';
+            treatSelect.innerHTML = '';
+
+            animals.forEach(a => {
+                historySelect.innerHTML += `<option value="${a.kupe}">${a.kupe} - ${a.adi} (${a.irk})</option>`;
+                treatSelect.innerHTML += `<option value="${a.kupe}">${a.kupe} - ${a.adi}</option>`;
+                if (a.cinsiyet === 'Dişi') {
+                    insemSelect.innerHTML += `<option value="${a.kupe}">${a.kupe} - ${a.adi}</option>`;
+                }
+                healthSelect.innerHTML += `<option value="${a.kupe}">${a.kupe} - ${a.adi}</option>`;
+            });
+        }
+
+        // HANDLERS
+        function handleAddTreatment(e) {
+            e.preventDefault();
+            const kupe = document.getElementById('inp-treat-kupe').value;
+            const teshis = document.getElementById('inp-treat-teshis').value;
+            const ilaclar = document.getElementById('inp-treat-ilaclar').value;
+            const tarih = document.getElementById('inp-treat-tarih').value;
+
+            const animal = animals.find(a => a.kupe === kupe);
+            const adi = animal ? animal.adi : 'Bilinmiyor';
+
+            treatments.unshift({
+                id: Date.now(),
+                kupe, adi, teshis, ilaclar, tarih, aktif: true
+            });
+
+            // Add event timeline
+            if (!animalEvents[kupe]) animalEvents[kupe] = [];
+            animalEvents[kupe].push({
+                tarih: new Date(tarih).toLocaleDateString('tr-TR'),
+                tur: "Tedavi / İlaç",
+                aciklama: `Teşhis: ${teshis}. Uygulanan İlaçlar: ${ilaclar}`
+            });
+
+            renderAllData();
+            closeModal('modal-treatment');
+            document.getElementById('inp-treat-teshis').value = '';
+            document.getElementById('inp-treat-ilaclar').value = '';
+        }
+
+        function handleAddAnimal(e) {
+            e.preventDefault();
+            const kupe = document.getElementById('inp-kupe').value;
+            const adi = document.getElementById('inp-adi').value || 'İsimsiz';
+            const irk = document.getElementById('inp-irk').value;
+            const cinsiyet = document.getElementById('inp-cinsiyet').value;
+            const dogum = document.getElementById('inp-dogum').value;
+
+            animals.push({ kupe, adi, irk, cinsiyet, dogum, gebelik: cinsiyet === 'Dişi' ? 'Boş' : 'Erkek', durum: 'Sağlıklı' });
+            animalEvents[kupe] = [{ tarih: new Date().toLocaleDateString('tr-TR'), tur: "Doğum / Kayıt", aciklama: "Çiftlik veritabanına eklendi." }];
+
+            renderAllData();
+            closeModal('modal-animal');
+        }
+
+        function handleAddInsemination(e) {
+            e.preventDefault();
+            const kupe = document.getElementById('inp-insem-kupe').value;
+            const tarih = document.getElementById('inp-insem-tarih').value;
+            const boga = document.getElementById('inp-insem-boga').value || 'Simental Boğa';
+
+            const d = new Date(tarih);
+            d.setDate(d.getDate() + 283);
+            const beklenen = d.toISOString().split('T')[0];
+
+            inseminations.push({ kupe, tarih, boga, beklenen, durum: 'Gebe' });
+            
+            const a = animals.find(x => x.kupe === kupe);
+            if (a) a.gebelik = 'Gebe';
+
+            if (!animalEvents[kupe]) animalEvents[kupe] = [];
+            animalEvents[kupe].push({
+                tarih: new Date(tarih).toLocaleDateString('tr-TR'),
+                tur: "Tohumlama",
+                aciklama: `${boga} boğa sperması ile tohumlandı. Beklenen Doğum: ${beklenen}`
+            });
+
+            renderAllData();
+            closeModal('modal-insemination');
+        }
+
+        function handleAddHealth(e) {
+            e.preventDefault();
+            const kupe = document.getElementById('inp-health-kupe').value;
+            const asi = document.getElementById('inp-health-asi').value;
+            const kontrol = document.getElementById('inp-health-kontrol').value;
+
+            healthRecords.push({
+                tarih: new Date().toISOString().split('T')[0],
+                kupe, asi, kontrol, vet: "Nihat İLHAN"
+            });
+
+            if (!animalEvents[kupe]) animalEvents[kupe] = [];
+            animalEvents[kupe].push({
+                tarih: new Date().toLocaleDateString('tr-TR'),
+                tur: "Aşı",
+                aciklama: `${asi} aşısı uygulandı.`
+            });
+
+            renderAllData();
+            closeModal('modal-health');
+        }
+
+        function deleteAnimal(kupe) {
+            animals = animals.filter(a => a.kupe !== kupe);
+            renderAllData();
+        }
+
+        // MODAL UTILS
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+            document.getElementById(id).classList.add('flex');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+            document.getElementById(id).classList.remove('flex');
+        }
+
+        // CHART INIT
+        function initChart() {
+            const ctxMilk = document.getElementById('milkChart').getContext('2d');
+            milkChartObj = new Chart(ctxMilk, {
+                type: 'line',
+                data: {
+                    labels: ['04 Şub', '05 Şub', '06 Şub', '07 Şub', '08 Şub', '09 Şub', '10 Şub'],
+                    datasets: [{
+                        label: 'Günlük Süt (Litre)',
+                        data: [72, 74, 73, 76, 75, 78, 76],
+                        borderColor: '#dc2626',
+                        backgroundColor: 'rgba(220, 38, 38, 0.15)',
+                        fill: true,
+                        tension: 0.35,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#71717a' }, grid: { color: '#18181b' } },
+                        y: { ticks: { color: '#71717a' }, grid: { color: '#18181b' } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
